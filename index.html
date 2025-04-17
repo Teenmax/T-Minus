@@ -161,20 +161,26 @@
       position: relative;
       display: flex;
       align-items: center;
+      animation: slow-blink 2s ease-in-out infinite;
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
     
-    /* Blinking cursor near the number */
-    .days-left::after {
-      content: "|";
-      margin-left: 0.5rem;
-      font-weight: 300;
-      animation: blink 1s step-end infinite;
-      opacity: 0.8;
+    .days-left:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 25px rgba(106, 17, 203, 0.6);
+      background: rgba(255, 255, 255, 0.2);
     }
     
-    @keyframes blink {
-      from, to { opacity: 0; }
-      50% { opacity: 1; }
+    .days-left:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 10px rgba(106, 17, 203, 0.3);
+    }
+    
+    /* Slow blinking animation */
+    @keyframes slow-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
     }
 
     .days-caption {
@@ -428,11 +434,12 @@
     // Initial calculation
     calculateDaysLeft();
     
-    // Add focus and blur event handlers to clear and restore default values
+    // Add focus, blur, and interaction handlers
     document.addEventListener('DOMContentLoaded', function() {
       // Get the input elements
       const currentAgeInput = document.getElementById('currentAge');
       const retireAgeInput = document.getElementById('retireAge');
+      const daysCounter = document.getElementById('daysLeft');
       
       // When the field gets focus and value is 0, clear it
       currentAgeInput.addEventListener('focus', function() {
@@ -462,6 +469,38 @@
           this.value = '0';
           calculateDaysLeft();
         }
+      });
+      
+      // Add click interaction to days counter
+      daysCounter.addEventListener('click', function() {
+        // Create a "copied" message 
+        const message = document.createElement('div');
+        message.textContent = "Days copied!";
+        message.style.position = "absolute";
+        message.style.bottom = "-35px";
+        message.style.left = "50%";
+        message.style.transform = "translateX(-50%)";
+        message.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+        message.style.color = "#fff";
+        message.style.padding = "5px 12px";
+        message.style.borderRadius = "5px";
+        message.style.fontSize = "0.8rem";
+        message.style.opacity = "0";
+        message.style.transition = "opacity 0.3s ease";
+        this.appendChild(message);
+        
+        // Show the message
+        setTimeout(() => { message.style.opacity = "1"; }, 10);
+        
+        // Copy the number to clipboard
+        navigator.clipboard.writeText(this.textContent)
+          .catch(err => console.error('Failed to copy: ', err));
+        
+        // Remove the message after a delay
+        setTimeout(() => {
+          message.style.opacity = "0";
+          setTimeout(() => message.remove(), 300);
+        }, 2000);
       });
     });
   </script>
