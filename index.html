@@ -428,9 +428,42 @@
     // Initial calculation
     calculateDaysLeft();
     
-    // Make sure the demo works properly with direct interaction
-    currentAgeInput.oninput = calculateDaysLeft;
-    retireAgeInput.oninput = calculateDaysLeft;
+    // Add focus and blur event handlers to clear and restore default values
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get the input elements
+      const currentAgeInput = document.getElementById('currentAge');
+      const retireAgeInput = document.getElementById('retireAge');
+      
+      // When the field gets focus and value is 0, clear it
+      currentAgeInput.addEventListener('focus', function() {
+        if (this.value === '0') {
+          this.value = '';
+        }
+      });
+      
+      // If the field loses focus and is empty, reset to 0
+      currentAgeInput.addEventListener('blur', function() {
+        if (this.value === '') {
+          this.value = '0';
+          calculateDaysLeft();
+        }
+      });
+      
+      // Same for retirement age input
+      retireAgeInput.addEventListener('focus', function() {
+        if (this.value === '0') {
+          this.value = '';
+        }
+      });
+      
+      // If the field loses focus and is empty, reset to 0
+      retireAgeInput.addEventListener('blur', function() {
+        if (this.value === '') {
+          this.value = '0';
+          calculateDaysLeft();
+        }
+      });
+    });
   </script>
 </body>
 </html>
