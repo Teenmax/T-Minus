@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>T-Minus</title>
+  <style>
+    /* ------------------------------
+       GLOBAL STYLES
+    --------------------------------*/
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      /* Black and purple gradient background */
+      background: linear-gradient(135deg, #000000 0%, #6a11cb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* ------------------------------
+       CONTAINER (GLASSMORPHISM)
+    --------------------------------*/
+    .calculator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 800px;
+      max-width: 90%;
+      background: rgba(255, 255, 255, 0.05); /* darker translucent background */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 2rem;
+      color: #fff;
+    }
+
+    /* Quote styling */
+    .quote-container {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .daily-quote {
+      font-style: italic;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+      color: #f0e6ff;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1.5rem 2rem;
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      max-width: 90%;
+    }
+    
+    .quote-author {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      text-align: right;
+      padding-right: 1.5rem;
+    }
+    
+    /* ------------------------------
+       LEFT SECTION
+    --------------------------------*/
+    .left {
+      flex: 1;
+      padding-right: 2rem;
+    }
+
+    .left h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .left p.subtitle {
+      font-size: 1rem;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .date-display {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    /* ------------------------------
+       RIGHT SECTION
+    --------------------------------*/
+    .right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      padding-left: 2rem;
+    }
+
+    .right h2 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .days-left {
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: #d09cff; /* Even brighter purple for better visibility */
+      margin-bottom: 0.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 15px;
+      padding: 1rem 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(106, 17, 203, 0.4);
+      text-shadow: 0 0 10px rgba(208, 156, 255, 0.5);
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    
+    /* Blinking cursor near the number */
+    .days-left::after {
+      content: "|";
+      margin-left: 0.5rem;
+      font-weight: 300;
+      animation: blink 1s step-end infinite;
+      opacity: 0.8;
+    }
+    
+    @keyframes blink {
+      from, to { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    .days-caption {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      max-width: 250px;
+      line-height: 1.4;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .calculator {
+        flex-direction: column;
+        padding: 1.5rem;
+        width: 95%;
+        max-width: 100%;
+      }
+      
+      /* Main content container */
+      .calculator > div[style*="display: flex"] {
+        flex-direction: column !important;
+      }
+      
+      .left {
+        padding-right: 0;
+        margin-bottom: 2rem;
+        width: 100%;
+      }
+      
+      .right {
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding-left: 0;
+        padding-top: 2rem;
+        width: 100%;
+      }
+      
+      .daily-quote {
+        font-size: 1rem;
+        padding: 1.2rem 1.5rem;
+        max-width: 100%;
+      }
+      
+      .left h1 {
+        font-size: 1.5rem;
+      }
+      
+      .left p.subtitle {
+        font-size: 0.9rem;
+      }
+      
+      .days-left {
+        font-size: 2.8rem;
+        padding: 0.8rem 1.8rem;
+      }
+    }
+    
+    /* Extra small devices */
+    @media (max-width: 480px) {
+      .calculator {
+        padding: 1.2rem;
+      }
+      
+      .quote-container {
+        margin-bottom: 1.8rem;
+      }
+      
+      .daily-quote {
+        font-size: 0.9rem;
+        padding: 1rem 1.2rem;
+      }
+      
+      .quote-author {
+        font-size: 0.8rem;
+        padding-right: 1rem;
+      }
+      
+      .left h1 {
+        font-size: 1.3rem;
+      }
+      
+      .input-group input {
+        padding: 0.4rem 0.6rem;
+      }
+      
+      .days-left {
+        font-size: 2.5rem;
+        padding: 0.7rem 1.5rem;
+      }
+      
+      .days-caption {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <!-- Quote Container -->
+    <div class="quote-container">
+      <div class="daily-quote" id="dailyQuote">The only difference between who you are and who you want to be is what you do today.</div>
+      <div class="quote-author" id="quoteAuthor">— Anonymous</div>
+    </div>
+    
+    <!-- Main content container -->
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%;">
+      <!-- LEFT SIDE: Inputs & Title -->
+      <div class="left">
+        <h1>T-Minus 🎯</h1>
+        <p class="subtitle">Calculate the days left until your milestone age.</p>
+
+        <div class="input-group">
+          <label for="currentAge">How old are you today?</label>
+          <input type="number" id="currentAge" min="0" max="120" value="0" />
+        </div>
+
+        <div class="input-group">
+          <label for="retireAge">Retirement Age</label>
+          <input type="number" id="retireAge" min="0" max="120" value="0" />
+        </div>
+
+        <div class="date-display">
+          Today's Date: <span id="currentDate">April 17, 2025</span>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: Result Display -->
+      <div class="right">
+        <h2>Remaining Days</h2>
+        <div class="days-left" id="daysLeft">0</div>
+        <div class="days-caption">These are the days you have left to turn your dreams into reality</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Grabbing elements
+    const currentAgeInput = document.getElementById("currentAge");
+    const retireAgeInput = document.getElementById("retireAge");
+    const daysLeftDisplay = document.getElementById("daysLeft");
+    const currentDate = document.getElementById("currentDate");
+    const dailyQuote = document.getElementById("dailyQuote");
+    const quoteAuthor = document.getElementById("quoteAuthor");
+
+    // Display today's date automatically
+    const today = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    currentDate.textContent = today.toLocaleDateString(undefined, options);
+    
+    // Philosophical and spiritual quotes collection (Naval Ravikant and similar thinkers)
+    const quotes = [
+      { text: "The purpose of life is to discover your gift. The work of life is to develop it. The meaning of life is to give your gift away.", author: "Naval Ravikant" },
+      { text: "All the real benefits in life come from compound interest; relationship, knowledge, experience.", author: "Naval Ravikant" },
+      { text: "A happy person isn't someone who's happy all the time. It's someone who effortlessly interprets events in such a way that they don't lose their innate peace.", author: "Naval Ravikant" },
+      { text: "Reading is faster than listening. Doing is faster than watching.", author: "Naval Ravikant" },
+      { text: "If you want to make the wrong decision, ask everyone.", author: "Naval Ravikant" },
+      { text: "You're not going to get rich renting out your time. You must own equity - a piece of a business - to gain your financial freedom.", author: "Naval Ravikant" },
+      { text: "Inspiration is perishable - act on it immediately.", author: "Naval Ravikant" },
+      { text: "All the returns in life, whether in wealth, relationships, or knowledge, come from compound interest.", author: "Naval Ravikant" },
+      { text: "We waste our time with short-term thinking and busywork. Warren Buffett spends a year deciding and a day acting. That act lasts decades.", author: "Naval Ravikant" },
+      { text: "Free education is abundant, all over the Internet. It's the desire to learn that's scarce.", author: "Naval Ravikant" },
+      { text: "Study mathematics and learn how to think clearly. Study philosophy and learn how to express clearly.", author: "Naval Ravikant" },
+      { text: "If you aren't willing to work for it, don't complain about not having it.", author: "Naval Ravikant" },
+      { text: "True wealth is having the freedom to do what you want, with whom you want, where you want, for as long as you want, with no financial concerns.", author: "James Clear" },
+      { text: "All big things come from small beginnings. The seed of every habit is a single, tiny decision.", author: "James Clear" },
+      { text: "The real challenge is not determining if you want the result, but if you are willing to accept the sacrifices required to achieve your goal.", author: "James Clear" },
+      { text: "You do not rise to the level of your goals. You fall to the level of your systems.", author: "James Clear" },
+      { text: "The secret of getting ahead is getting started. The secret of getting started is breaking your complex overwhelming tasks into small manageable tasks, and then starting on the first one.", author: "Mark Twain" },
+      { text: "The quality of your life is a direct reflection of the quality of your questions.", author: "Tony Robbins" },
+      { text: "When forced to work within a strict framework, the imagination is taxed to its utmost – and will produce its richest ideas.", author: "T.S. Eliot" },
+      { text: "Your success in life isn't based on your ability to simply change. It's based on your ability to change faster than your competition, your situation, and your environment.", author: "Mark Sanborn" },
+      { text: "The universe doesn't conspire against you, but it doesn't go out of its way to line up all the pins either.", author: "Tim Ferriss" },
+      { text: "Focus on being productive instead of busy.", author: "Tim Ferriss" },
+      { text: "If you cannot do great things, do small things in a great way.", author: "Napoleon Hill" },
+      { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle" },
+      { text: "Life shrinks or expands in proportion to one's courage.", author: "Anais Nin" },
+      { text: "Do the difficult things while they are easy and do the great things while they are small. A journey of a thousand miles must begin with a single step.", author: "Lao Tzu" },
+      { text: "Remembering that you are going to die is the best way I know to avoid the trap of thinking you have something to lose. You are already naked.", author: "Steve Jobs" },
+      { text: "You can achieve anything in life as long as you're not worried about who gets the credit.", author: "Harry Truman" },
+      { text: "Work hard in silence, let your success be your noise.", author: "Frank Ocean" },
+      { text: "Happiness is not something ready-made. It comes from your own actions.", author: "Dalai Lama" }
+    ];
+    
+    // Calculate the days left
+    function calculateDaysLeft() {
+      const currentAge = parseInt(currentAgeInput.value) || 0;
+      const retireAge = parseInt(retireAgeInput.value) || 0;
+
+      // Only calculate days if both inputs have non-zero values
+      if (currentAge > 0 && retireAge > 0) {
+        // Calculate days based on first input minus second input
+        const ageDifference = Math.abs(currentAge - retireAge);
+        const daysLeft = ageDifference * 365;
+        
+        // Animate the counter change
+        animateCounter(daysLeftDisplay, daysLeft);
+      } else {
+        // If either input is 0 or empty, show 0 days
+        daysLeftDisplay.textContent = "0";
+      }
+    }
+
+    // Animate counter from current to target value
+    function animateCounter(element, targetValue) {
+      // Parse current value
+      const currentValue = parseInt(element.textContent.replace(/,/g, '')) || 0;
+      
+      // If values are the same, no need to animate
+      if (currentValue === targetValue) return;
+      
+      // Determine increment size based on the difference
+      const diff = Math.abs(targetValue - currentValue);
+      const increment = Math.max(1, Math.ceil(diff / 50));
+      
+      // Start the animation
+      let currentCount = currentValue;
+      const interval = setInterval(() => {
+        if (currentValue < targetValue) {
+          currentCount = Math.min(currentCount + increment, targetValue);
+        } else {
+          currentCount = Math.max(currentCount - increment, targetValue);
+        }
+        
+        element.textContent = currentCount.toLocaleString();
+        
+        if (currentCount === targetValue) {
+          clearInterval(interval);
+        }
+      }, 10);
+    }
+    
+    // Function to display a new quote
+    function updateDailyQuote() {
+      // Use the date as a seed for consistent daily quote
+      const date = new Date();
+      const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+      const quoteIndex = dayOfYear % quotes.length;
+      
+      const todaysQuote = quotes[quoteIndex];
+      dailyQuote.textContent = todaysQuote.text;
+      quoteAuthor.textContent = "— " + todaysQuote.author;
+    }
+
+    // Event listeners
+    currentAgeInput.addEventListener("input", calculateDaysLeft);
+    retireAgeInput.addEventListener("input", calculateDaysLeft);
+    
+    // Initial quote display
+    updateDailyQuote();
+    
+    // Initial calculation
+    calculateDaysLeft();
+    
+    // Make sure the demo works properly with direct interaction
+    currentAgeInput.oninput = calculateDaysLeft;
+    retireAgeInput.oninput = calculateDaysLeft;
+  </script>
+</body>
+</html>
