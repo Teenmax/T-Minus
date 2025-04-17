@@ -179,8 +179,16 @@
     
     /* Slow blinking animation */
     @keyframes slow-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
+      0%, 100% { 
+        opacity: 1; 
+        text-shadow: 0 0 15px rgba(208, 156, 255, 0.8);
+        box-shadow: 0 4px 20px rgba(106, 17, 203, 0.6);
+      }
+      50% { 
+        opacity: 0.8; 
+        text-shadow: 0 0 5px rgba(208, 156, 255, 0.3);
+        box-shadow: 0 4px 20px rgba(106, 17, 203, 0.3);
+      }
     }
 
     .days-caption {
